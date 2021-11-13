@@ -5,8 +5,12 @@ window.onload = async (event) => {
   const errorMsg = document.getElementsByClassName('errorMsg')[0];
 
   const users = await getUsers();
+  //Create empty object that will later hold user posts
+  const posts = {};
 
-  generateUserTable(users);
+  if (users.length > 0) {
+    generateUserTable(users);
+  }
 
   async function getUsers() {
     return fetch(`https://jsonplaceholder.typicode.com/users`)
@@ -18,8 +22,26 @@ window.onload = async (event) => {
   }
 
   async function getUserPosts(userId) {
-    return fetch(`https://jsonplaceholder.typicode.com/posts?userId=${userId}`)
+    //If we have already downloaded this users posts, return them
+    if (posts[userId] !== undefined) {
+      return posts[userId];
+    }
+    //if posts for this user have not been stored yet, retrieve from api then return that user's posts
+    return fetch(`https://jsonplaceholder.typicode.com/posts`)
       .then((response) => response.json())
+      .then(response => {
+          response.forEach(post => {
+            if (posts[post.userId] === undefined) {
+              posts[post.userId] = [];
+            }
+          posts[post.userId].push({id: post.id, title: post.title, body: post.body});
+        });
+        if (posts[userId] !== undefined) {
+          return posts[userId];
+        } else {
+          throw new Error('User not found');
+        }
+      })
       .catch(err => {
         displayErrorMessage(`Failed to retrieve data for user '${userId}'`);
         return [];
@@ -29,7 +51,6 @@ window.onload = async (event) => {
   function generateUserTable(userData) {
     // Reset Table incase this is called more than once
     userTable.innerHTML = "";
-
     //Create Table Header
     const header = userTable.createTHead();
     const row = header.insertRow(0);
@@ -40,8 +61,10 @@ window.onload = async (event) => {
     row.insertCell().innerHTML = "Address";
     row.insertCell().innerHTML = "Company";
 
+    const body = userTable.createTBody();
+
     userData.forEach(user => {
-      const row = userTable.insertRow();
+      const row = body.insertRow();
 
       row.insertCell().innerHTML = user.id;
       row.insertCell().innerHTML = user.name;
@@ -59,13 +82,13 @@ window.onload = async (event) => {
 
   async function displayUserPosts(userId, username) {
     const posts = await getUserPosts(userId);
-
-    postTable.innerHTML = "";
+    postTable.innerHTML = '';
     const header = postTable.createTHead();
     const row = header.insertRow(0);
-    row.insertCell().innerHTML = `<b>${username}'s posts</b>`
+    row.insertCell().innerHTML = `<h3>${username}'s posts</h3>`;
+    const body = postTable.createTBody();
     posts.forEach(post => {
-      const row = postTable.insertRow();
+      const row = body.insertRow();
       row.insertCell().innerHTML = `
         <b class="postTitle">${post.title}</b>
         <br>

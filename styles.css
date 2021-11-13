@@ -1,0 +1,64 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  font-family: 'Open Sans', Verdana, sans-serif;
+  min-width: 1280px;
+  padding: 8px;
+}
+
+.errorMsg {
+  opacity:0;
+  background: #c33;
+  color: white;
+  font-size: 16px;
+  text-align: center;
+  padding: 16px;
+  border-radius: 8px;
+  transition: all 0.2s;
+  left: 10vw;
+  right: 10vw;
+  position:fixed;
+}
+
+.errorMsg.show {
+  opacity:1;
+}
+
+.userTable {
+  table-layout: auto;
+  border-collapse: collapse;
+  border: 1px solid black;
+  width: 100%;
+}
+
+.userTable thead {
+  background: #39f;
+  color: white;
+}
+
+.userTable td {
+  border: 1px solid #6669;
+}
+
+.userTable tbody tr:hover {
+  cursor: pointer;
+  text-decoration: underline;
+  background: #ccc;
+}
+
+
+
+tr:nth-child(2n) {
+  background: #eee;
+}
+
+.postTable {
+  width: 100%;
+}
+
+.postTable tbody td {
+  padding: 16px;
+}
